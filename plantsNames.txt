@@ -1,0 +1,181 @@
+Alnus glutinosa 
+Betula sp.
+Carpinus betulus 
+Corylus avellana 
+Castanea sativa 
+Fagus sylvatica      
+Quercus coccifera       
+Quercus faginea 
+Quercus ilex subsp. 
+Ballota        
+Quercus ilex subsp. 
+Ilex 
+Quercus petraea 
+Quercus pyrenaica      
+Quercus robur 
+Quercus suber 
+Populus alba         
+Populus nigra 
+Salix sp.       
+Tilia sp.         
+Celtis australis               
+Ulmus minor         
+Acer monspessulanum      
+Acer pseudoplatanus        
+Ilex aquifolium 
+Cupressus sempervirens      
+Juniperus communis      
+Juniperus oxycedrus 
+Juniperus phoenicea      
+Juniperus thurifera       
+Ginkgo biloba      
+Abies alba 
+Abies pinsapo 
+Cedrus sp                 
+Larix decidua       
+Picea abies          
+Pinus canariensis 
+Pinus halepensis      
+Pinus nigra 
+Pinus pinaster        
+Pinus pinea 
+Pinus sylvestris 
+Pseudotsuga menziessi        
+Taxus baccata         
+Sequoia sempervirens 
+Sequoiadendron giganteum
+Cistus albidus 
+Cistus Laurifolius 
+Cistus monspeliensis 
+Cistus populifolius       
+Cistus salvifolius 
+Fumana ericifolia     
+Fumana thymifolia 
+Halimium atriplicifolium 
+Halimium ocymoides 
+Halimium umbellatum subsp. 
+Viscosum Helianthemum sp. 
+Crataegus monogyna      
+Prunus avium        
+Prunus dulcis 
+Prunus laurocerassus 
+Prunus spinosa 
+Rosa sp.       
+Rubus ulmifolius 
+Sorbus aria 
+Sorbus acuparia 
+Sorbus torminalis
+Genista mugronensis 
+Genistella tridentata 
+Erinacea anthyllis 
+Genista scorpius 
+Genista hirsuta
+Genista florida 
+Dorycnium pentaphyllum 
+Retama sphaerocarpa
+Coronilla sp. 
+Glycirrhiza glabra 
+Sophora japonica 
+Ceratonia siliqua
+Adenocarpus sp. 
+Robinia pseudoacacia 
+Cytisus multiflorus 
+Spartium junceum 
+Cytisus striatus 
+Cytisus scoparius
+Juglans regia 
+Cytisus oromediterraneus 
+Morus sp. 
+Ficus carica 
+Lonicera sp. 
+Sambucus nigra
+Cornus sanguinea
+Viburnum tinus
+Vaccinium myrtillus 
+Rhododendron ferrugineum
+Arbutus unedo 
+Arotostaphylos uva-ursi
+Calluna vulgaris 
+Erica scoparia 
+Erica arborea
+Erica umbellata 
+Erica tetralix 
+Erica australis
+Phlomis lychnitis 
+Rosmarinus officinalis 
+Lavandula latifolia
+Salvia lavandulifolia 
+Lavandula stoechas 
+Teucrium fruticans
+Teucrium gnaphalades 
+Thymus vulgaris 
+Thymus zygis
+Thymus mastichina 
+Sideritis incana 
+Sideritis hirsuta
+Aesculus hippocastanum 
+Eucaliptus globulus
+Eucaliptus camaldulensis 
+Cabeza anteridial  
+Cabeza arquegonial
+Protonema 
+Prótalo con anteridios
+Anteridios 
+Prótalo con arquegonios 
+Esporangios 
+Fronde con soro e indusio
+Phyllites scolopendrium Entera 
+Blechnum spicant Monopinnada 
+Polypodium vulgare Monopinnada
+Phyllites scolopendrium Entera 
+Blechnum spicant Monopinnada 
+Polypodium vulgare Monopinnada
+Pteridium aquilinum Bipinnada 
+Adiantum capillusveneris Bipinnada 
+Drypoteris filix-mas Bipinnada 
+Asplenium adiantumnigrum Tripinnada 
+Athyrium filxfemina Tripinnada
+Taxus baccata     
+Ginkgo biloba
+Juniperus communis   
+Juniperus oxycedrus   
+Juniperus phoenicea 
+Juniperus thurifera    
+Cupressus sempervirens
+Pinus canariensis    
+Pinus nigra
+Pinus halepensis    
+Pinus pinaster
+Pinus pinea     
+Pinus sylvestris
+Picea abies    
+Larix decidua 
+Cedrus sp.   
+Sequoiadendron giganteum   
+Sequoia sempervirens
+Pseudotsuga menziesii     
+Abies pinsapo    
+Abies alba
+Quercus coccifera    
+Quercus suber
+Quercus ilex subsp. ilex   
+Quercus ilex subsp. ballota     
+Quercus faginea
+Quercus pyrenaica    
+Quercus petraea   
+Quercus robur
+Castanea sativa     
+Fagus sylvatica     
+Corylus avellana
+Alnus glutinosa     
+Betula pendula   
+Carpinus betulus 
+Salix alba    
+Populus nigra
+Populus alba   
+Acer pseudoplatanus    
+Acer monopessulanum
+Ulmus minor    
+Celtis australis     
+Tilia sp. 
+Ilex aquifolium
