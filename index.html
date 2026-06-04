@@ -1,0 +1,890 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>BotánicaStudy</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --g50:#f0fdf4; --g100:#dcfce7; --g200:#bbf7d0; --g300:#86efac;
+      --g400:#4ade80; --g500:#22c55e; --g600:#16a34a; --g700:#15803d;
+      --g800:#166534; --g900:#14532d;
+      --gray50:#f9fafb; --gray100:#f3f4f6; --gray200:#e5e7eb;
+      --gray300:#d1d5db; --gray400:#9ca3af; --gray500:#6b7280;
+      --gray600:#4b5563; --gray700:#374151; --gray800:#1f2937;
+      --sh:0 4px 6px -1px rgba(0,0,0,.1),0 2px 4px -1px rgba(0,0,0,.06);
+      --shl:0 10px 15px -3px rgba(0,0,0,.1),0 4px 6px -2px rgba(0,0,0,.05);
+      --shxl:0 20px 25px -5px rgba(0,0,0,.1),0 10px 10px -5px rgba(0,0,0,.04);
+      --r:16px; --rsm:8px; --rlg:24px;
+      --tr:.2s ease;
+      --font:'Segoe UI',system-ui,-apple-system,sans-serif;
+    }
+
+    body {
+      font-family:var(--font);
+      background:var(--g50);
+      color:var(--gray800);
+      min-height:100vh;
+      overflow-x:hidden;
+    }
+
+    /* HEADER */
+    .hdr {
+      background:white;
+      border-bottom:1px solid var(--g100);
+      padding:14px 24px;
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      position:sticky;
+      top:0;
+      z-index:100;
+      box-shadow:0 1px 3px rgba(0,0,0,.06);
+    }
+    .logo {
+      font-size:1.25rem;
+      font-weight:800;
+      color:var(--g700);
+      cursor:pointer;
+      user-select:none;
+    }
+    .logo span { color:var(--g500); }
+    .btn-back {
+      display:flex;
+      align-items:center;
+      gap:6px;
+      padding:8px 16px;
+      background:var(--g100);
+      color:var(--g700);
+      border:none;
+      border-radius:var(--rsm);
+      font-size:.875rem;
+      font-weight:600;
+      cursor:pointer;
+      transition:background var(--tr);
+      font-family:var(--font);
+    }
+    .btn-back:hover { background:var(--g200); }
+    .btn-back.hidden { visibility:hidden; }
+
+    /* CONTAINER */
+    .wrap { max-width:920px; margin:0 auto; padding:32px 20px; }
+
+    /* SCREENS */
+    .screen { display:none; animation:fadeIn .3s ease; }
+    .screen.active { display:block; }
+    @keyframes fadeIn { from{opacity:0;transform:translateY(8px)} to{opacity:1;transform:none} }
+
+    /* ====== HOME ====== */
+    .hero {
+      text-align:center;
+      margin-bottom:44px;
+    }
+    .hero .emoji { font-size:3.5rem; display:block; margin-bottom:14px; }
+    .hero h1 {
+      font-size:2.2rem;
+      font-weight:800;
+      color:var(--g800);
+      margin-bottom:10px;
+    }
+    .hero p { font-size:1.05rem; color:var(--gray500); max-width:480px; margin:0 auto; }
+
+    .mode-grid {
+      display:grid;
+      grid-template-columns:repeat(auto-fit,minmax(240px,1fr));
+      gap:18px;
+      margin-bottom:28px;
+    }
+    .mode-card {
+      background:white;
+      border-radius:var(--rlg);
+      padding:28px 24px;
+      cursor:pointer;
+      transition:transform .2s ease,box-shadow .2s ease,border-color .2s ease;
+      box-shadow:var(--sh);
+      border:2px solid transparent;
+      position:relative;
+      overflow:hidden;
+    }
+    .mode-card::after {
+      content:'';
+      position:absolute;
+      top:0;left:0;right:0;
+      height:4px;
+    }
+    .mode-card.test::after  { background:linear-gradient(90deg,var(--g500),var(--g700)); }
+    .mode-card.study::after { background:linear-gradient(90deg,#3b82f6,#6366f1); }
+    .mode-card.rev::after   { background:linear-gradient(90deg,#f59e0b,#ef4444); }
+    .mode-card:hover { transform:translateY(-4px); box-shadow:var(--shxl); }
+    .mode-card.test:hover  { border-color:var(--g200); }
+    .mode-card.study:hover { border-color:#dbeafe; }
+    .mode-card.rev:hover   { border-color:#fef3c7; }
+    .mode-card .ic { font-size:2.2rem; margin-bottom:14px; display:block; }
+    .mode-card h2 { font-size:1.2rem; font-weight:700; margin-bottom:6px; }
+    .mode-card p  { font-size:.875rem; color:var(--gray500); line-height:1.5; }
+    .badge {
+      display:inline-flex;
+      align-items:center;
+      gap:4px;
+      margin-top:14px;
+      padding:4px 10px;
+      border-radius:20px;
+      font-size:.78rem;
+      font-weight:600;
+    }
+    .badge.green  { background:var(--g100); color:var(--g700); }
+    .badge.blue   { background:#dbeafe; color:#1d4ed8; }
+    .badge.yellow { background:#fef3c7; color:#92400e; }
+
+    .stats-row {
+      display:flex;
+      gap:14px;
+      flex-wrap:wrap;
+    }
+    .stat {
+      background:white;
+      border-radius:var(--r);
+      padding:16px 20px;
+      flex:1;
+      min-width:110px;
+      box-shadow:0 1px 3px rgba(0,0,0,.06);
+      text-align:center;
+    }
+    .stat .val { font-size:1.6rem; font-weight:800; color:var(--g600); }
+    .stat .lbl { font-size:.78rem; color:var(--gray500); margin-top:4px; }
+
+    /* ====== TEST ====== */
+    .prog-wrap {
+      background:var(--g100);
+      border-radius:999px;
+      height:8px;
+      overflow:hidden;
+      margin-bottom:8px;
+    }
+    .prog-fill {
+      height:100%;
+      background:linear-gradient(90deg,var(--g400),var(--g600));
+      border-radius:999px;
+      transition:width .4s ease;
+    }
+    .prog-labels {
+      display:flex;
+      justify-content:space-between;
+      font-size:.82rem;
+      color:var(--gray500);
+      margin-bottom:20px;
+    }
+
+    .q-dots {
+      display:flex;
+      gap:5px;
+      flex-wrap:wrap;
+      justify-content:center;
+      margin-bottom:18px;
+    }
+    .dot {
+      width:10px;height:10px;
+      border-radius:50%;
+      background:var(--gray200);
+      cursor:pointer;
+      transition:all var(--tr);
+      flex-shrink:0;
+    }
+    .dot.ans  { background:var(--g400); }
+    .dot.cur  { background:var(--g700); transform:scale(1.35); }
+
+    .q-card {
+      background:white;
+      border-radius:var(--rlg);
+      padding:26px;
+      box-shadow:var(--sh);
+      margin-bottom:20px;
+    }
+    .q-imgs {
+      display:flex;
+      gap:14px;
+      justify-content:center;
+      flex-wrap:wrap;
+      margin-bottom:22px;
+    }
+    .q-imgs img {
+      height:210px;
+      max-width:100%;
+      border-radius:var(--r);
+      object-fit:cover;
+      box-shadow:var(--sh);
+      flex:1;
+      min-width:140px;
+    }
+    .opts {
+      display:grid;
+      grid-template-columns:1fr 1fr;
+      gap:11px;
+    }
+    @media(max-width:500px){.opts{grid-template-columns:1fr}}
+    .opt {
+      padding:15px 18px;
+      background:var(--gray50);
+      border:2px solid var(--gray200);
+      border-radius:var(--r);
+      font-size:.93rem;
+      font-weight:500;
+      color:var(--gray700);
+      cursor:pointer;
+      text-align:left;
+      transition:all var(--tr);
+      line-height:1.3;
+      font-family:var(--font);
+      display:flex;
+      align-items:center;
+      gap:10px;
+    }
+    .opt:hover:not(:disabled) { background:var(--g50); border-color:var(--g300); color:var(--g800); }
+    .opt.sel { background:var(--g100); border-color:var(--g500); color:var(--g800); }
+    .opt-ltr {
+      display:inline-flex;
+      align-items:center;
+      justify-content:center;
+      width:24px;height:24px;
+      border-radius:50%;
+      background:var(--gray200);
+      color:var(--gray600);
+      font-size:.72rem;
+      font-weight:700;
+      flex-shrink:0;
+      transition:all var(--tr);
+    }
+    .opt.sel .opt-ltr { background:var(--g500); color:white; }
+
+    .nav-row {
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:10px;
+      flex-wrap:wrap;
+    }
+    .btn {
+      display:inline-flex;
+      align-items:center;
+      gap:6px;
+      padding:12px 20px;
+      border-radius:var(--rsm);
+      font-size:.9rem;
+      font-weight:600;
+      cursor:pointer;
+      border:none;
+      transition:all var(--tr);
+      font-family:var(--font);
+    }
+    .btn.sec { background:var(--gray100); color:var(--gray600); }
+    .btn.sec:hover { background:var(--gray200); }
+    .btn.pri { background:linear-gradient(135deg,var(--g500),var(--g600)); color:white; }
+    .btn.pri:hover { background:linear-gradient(135deg,var(--g600),var(--g700)); transform:translateY(-1px); }
+    .btn.red { background:linear-gradient(135deg,#ef4444,#dc2626); color:white; }
+    .btn.red:hover { background:linear-gradient(135deg,#dc2626,#b91c1c); }
+    .btn:disabled { opacity:.4; cursor:not-allowed; transform:none!important; }
+
+    /* ====== RESULTS ====== */
+    .res-card {
+      background:white;
+      border-radius:var(--rlg);
+      padding:44px 28px;
+      text-align:center;
+      box-shadow:var(--shl);
+    }
+    .score-ring {
+      width:150px;height:150px;
+      border-radius:50%;
+      margin:0 auto 22px;
+      display:flex;
+      flex-direction:column;
+      align-items:center;
+      justify-content:center;
+      font-weight:800;
+    }
+    .score-ring.pass {
+      background:linear-gradient(135deg,var(--g100),var(--g200));
+      color:var(--g700);
+      box-shadow:0 0 0 8px var(--g50),0 0 0 16px var(--g100);
+    }
+    .score-ring.fail {
+      background:linear-gradient(135deg,#fef2f2,#fee2e2);
+      color:#dc2626;
+      box-shadow:0 0 0 8px #fef2f2,0 0 0 16px #fee2e2;
+    }
+    .score-ring .pct { font-size:2.4rem; line-height:1; }
+    .score-ring .frac { font-size:.82rem; opacity:.75; margin-top:4px; }
+    .res-title { font-size:1.7rem; font-weight:800; margin-bottom:8px; }
+    .res-sub { color:var(--gray500); margin-bottom:28px; font-size:1rem; }
+    .res-stats { display:flex; gap:16px; justify-content:center; flex-wrap:wrap; margin-bottom:28px; }
+    .rs { padding:14px 22px; border-radius:var(--r); font-weight:700; font-size:1rem; }
+    .rs.ok { background:var(--g100); color:var(--g700); }
+    .rs.ko { background:#fee2e2; color:#dc2626; }
+    .res-acts { display:flex; gap:10px; justify-content:center; flex-wrap:wrap; }
+
+    /* ====== FLASHCARD ====== */
+    .fc-wrap {
+      perspective:1200px;
+      max-width:580px;
+      margin:0 auto 24px;
+      height:380px;
+    }
+    .fc {
+      width:100%;height:100%;
+      position:relative;
+      transform-style:preserve-3d;
+      transition:transform .55s cubic-bezier(.4,0,.2,1);
+      cursor:pointer;
+    }
+    .fc.flip { transform:rotateY(180deg); }
+    .face {
+      position:absolute;
+      width:100%;height:100%;
+      backface-visibility:hidden;
+      border-radius:var(--rlg);
+      overflow:hidden;
+      box-shadow:var(--shxl);
+    }
+    .fc-front {
+      background:white;
+      display:flex;
+      flex-direction:column;
+      align-items:center;
+      justify-content:center;
+    }
+    .fc-front .fc-imgs {
+      display:flex;
+      width:100%;height:100%;
+    }
+    .fc-front .fc-imgs img {
+      flex:1;
+      height:100%;
+      object-fit:cover;
+      min-width:0;
+    }
+    .tap-hint {
+      position:absolute;
+      bottom:14px;
+      left:50%;
+      transform:translateX(-50%);
+      background:rgba(0,0,0,.48);
+      color:white;
+      padding:5px 14px;
+      border-radius:999px;
+      font-size:.78rem;
+      backdrop-filter:blur(4px);
+      white-space:nowrap;
+      pointer-events:none;
+    }
+    .fc-back {
+      background:linear-gradient(135deg,var(--g600),var(--g900));
+      transform:rotateY(180deg);
+      display:flex;
+      flex-direction:column;
+      align-items:center;
+      justify-content:center;
+      padding:36px;
+      text-align:center;
+    }
+    .fc-back .deco { font-size:2.8rem; opacity:.25; margin-bottom:14px; }
+    .fc-back .pname {
+      color:white;
+      font-size:1.7rem;
+      font-weight:800;
+      font-style:italic;
+      line-height:1.3;
+    }
+    .fc-back .tap-back { color:rgba(255,255,255,.5); font-size:.82rem; margin-top:18px; }
+
+    .study-btns { display:flex; gap:12px; justify-content:center; flex-wrap:wrap; }
+
+    /* ====== EMPTY ====== */
+    .empty {
+      text-align:center;
+      padding:56px 28px;
+      background:white;
+      border-radius:var(--rlg);
+      box-shadow:var(--sh);
+    }
+    .empty .eico { font-size:3rem; margin-bottom:14px; }
+    .empty h3 { font-size:1.2rem; font-weight:700; margin-bottom:6px; color:var(--gray700); }
+    .empty p  { color:var(--gray500); max-width:300px; margin:0 auto 22px; }
+
+    /* ====== LOADING ====== */
+    .loading {
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      min-height:60vh;
+      flex-direction:column;
+      gap:14px;
+      color:var(--g600);
+    }
+    .spin {
+      width:44px;height:44px;
+      border:4px solid var(--g100);
+      border-top-color:var(--g500);
+      border-radius:50%;
+      animation:spin .75s linear infinite;
+    }
+    @keyframes spin{to{transform:rotate(360deg)}}
+
+    /* ====== CONFETTI ====== */
+    #cvs {
+      position:fixed;
+      top:0;left:0;
+      width:100%;height:100%;
+      pointer-events:none;
+      z-index:9999;
+    }
+
+    /* RESPONSIVE */
+    @media(max-width:600px){
+      .hero h1{font-size:1.7rem}
+      .fc-wrap{height:280px}
+      .fc-back .pname{font-size:1.3rem}
+      .wrap{padding:20px 14px}
+      .q-imgs img{height:160px}
+    }
+  </style>
+</head>
+<body>
+
+<header class="hdr">
+  <div class="logo" onclick="goHome()">🌿 Botánica<span>Study</span></div>
+  <button class="btn-back hidden" id="btnBack" onclick="goHome()">← Inicio</button>
+</header>
+
+<canvas id="cvs"></canvas>
+
+<div class="wrap">
+
+  <!-- LOADING -->
+  <div class="loading screen active" id="sLoad">
+    <div class="spin"></div>
+    <p>Cargando plantas…</p>
+  </div>
+
+  <!-- HOME -->
+  <div class="screen" id="sHome">
+    <div class="hero">
+      <span class="emoji">🌱</span>
+      <h1>Aprende botánica</h1>
+      <p>Identifica y memoriza plantas con tres modos de aprendizaje adaptados a ti</p>
+    </div>
+    <div class="mode-grid">
+      <div class="mode-card test" onclick="startTest()">
+        <span class="ic">📝</span>
+        <h2>Modo Test</h2>
+        <p>Pon a prueba tus conocimientos con 50 preguntas aleatorias. Cada imagen, 4 opciones.</p>
+        <span class="badge green">🏆 50 preguntas</span>
+      </div>
+      <div class="mode-card study" onclick="startStudy()">
+        <span class="ic">📚</span>
+        <h2>Modo Estudio</h2>
+        <p>Flashcards interactivas. Observa la imagen y descubre el nombre girando la tarjeta.</p>
+        <span class="badge blue">🔄 Tarjetas infinitas</span>
+      </div>
+      <div class="mode-card rev" onclick="startReview()">
+        <span class="ic">🔍</span>
+        <h2>Repaso de Errores</h2>
+        <p>Repasa únicamente las plantas que has fallado en los tests anteriores.</p>
+        <span class="badge yellow" id="errBadge">⚠️ 0 errores</span>
+      </div>
+    </div>
+    <div class="stats-row">
+      <div class="stat"><div class="val" id="stPlants">—</div><div class="lbl">Plantas</div></div>
+      <div class="stat"><div class="val" id="stTests">—</div><div class="lbl">Tests completados</div></div>
+      <div class="stat"><div class="val" id="stBest">—</div><div class="lbl">Mejor nota</div></div>
+      <div class="stat"><div class="val" id="stErrs">—</div><div class="lbl">Errores guardados</div></div>
+    </div>
+  </div>
+
+  <!-- TEST -->
+  <div class="screen" id="sTest">
+    <div class="prog-wrap"><div class="prog-fill" id="progFill" style="width:0%"></div></div>
+    <div class="prog-labels">
+      <span id="progTxt">Pregunta 1 de 50</span>
+      <span id="progAns">0 respondidas</span>
+    </div>
+    <div class="q-dots" id="qDots"></div>
+    <div class="q-card">
+      <div class="q-imgs" id="qImgs"></div>
+      <div class="opts" id="qOpts"></div>
+    </div>
+    <div class="nav-row">
+      <button class="btn sec" id="btnPrev" onclick="prevQ()">← Anterior</button>
+      <button class="btn red" onclick="askFinish()">Finalizar test</button>
+      <button class="btn pri" id="btnNext" onclick="nextQ()">Siguiente →</button>
+    </div>
+  </div>
+
+  <!-- RESULTS -->
+  <div class="screen" id="sResults">
+    <div class="res-card">
+      <div class="score-ring" id="ring">
+        <div class="pct" id="rPct">—</div>
+        <div class="frac" id="rFrac">—</div>
+      </div>
+      <h2 class="res-title" id="rTitle">—</h2>
+      <p class="res-sub" id="rSub">—</p>
+      <div class="res-stats">
+        <div class="rs ok" id="rOk">✓ — correctas</div>
+        <div class="rs ko" id="rKo">✗ — incorrectas</div>
+      </div>
+      <div class="res-acts">
+        <button class="btn pri" onclick="startTest()">Nuevo test</button>
+        <button class="btn sec" onclick="startReview()">Repasar errores</button>
+        <button class="btn sec" onclick="goHome()">Inicio</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- STUDY -->
+  <div class="screen" id="sStudy">
+    <div class="fc-wrap">
+      <div class="fc" id="fcStudy" onclick="flipCard('fcStudy')">
+        <div class="face fc-front">
+          <div class="fc-imgs" id="studyImgs"></div>
+          <div class="tap-hint">Toca para ver el nombre</div>
+        </div>
+        <div class="face fc-back">
+          <div class="deco">🌿</div>
+          <div class="pname" id="studyName"></div>
+          <div class="tap-back">Toca para volver</div>
+        </div>
+      </div>
+    </div>
+    <div class="study-btns">
+      <button class="btn sec" onclick="goHome()">← Inicio</button>
+      <button class="btn pri" onclick="nextStudyCard()">Siguiente planta →</button>
+    </div>
+  </div>
+
+  <!-- REVIEW -->
+  <div class="screen" id="sReview">
+    <div class="empty" id="revEmpty" style="display:none">
+      <div class="eico">✅</div>
+      <h3>¡Sin errores que repasar!</h3>
+      <p>Todavía no tienes errores guardados. Completa un test primero.</p>
+      <button class="btn pri" onclick="startTest()">Hacer un test</button>
+    </div>
+    <div id="revContent" style="display:none">
+      <div class="fc-wrap">
+        <div class="fc" id="fcReview" onclick="flipCard('fcReview')">
+          <div class="face fc-front">
+            <div class="fc-imgs" id="revImgs"></div>
+            <div class="tap-hint">Toca para ver el nombre</div>
+          </div>
+          <div class="face fc-back">
+            <div class="deco">🌿</div>
+            <div class="pname" id="revName"></div>
+            <div class="tap-back">Toca para volver</div>
+          </div>
+        </div>
+      </div>
+      <p id="revCtr" style="text-align:center;color:var(--gray400);font-size:.82rem;margin-bottom:16px"></p>
+      <div class="study-btns">
+        <button class="btn sec" onclick="goHome()">← Inicio</button>
+        <button class="btn pri" onclick="nextRevCard()">Siguiente →</button>
+      </div>
+    </div>
+  </div>
+
+</div><!-- /wrap -->
+
+<script>
+// ── DATA ──────────────────────────────────────────────────────
+let plants = [];
+let qs = [];       // test questions
+let qIdx = 0;
+let studyHist = [];
+let revPlants = [];
+let revIdx = 0;
+let confFrame;
+
+// ── LOCALSTORAGE ──────────────────────────────────────────────
+const LS = {
+  get: k => { try { return JSON.parse(localStorage.getItem('bst_' + k)); } catch { return null; } },
+  set: (k, v) => localStorage.setItem('bst_' + k, JSON.stringify(v)),
+};
+
+// ── INIT ──────────────────────────────────────────────────────
+async function init() {
+  try {
+    const r = await fetch('plants.json');
+    const data = await r.json();
+    plants = Object.values(data).map(p => ({
+      name: p.name.trim(),
+      imgs: (p.img || []).filter(i => i && i !== '...')
+    })).filter(p => p.imgs.length > 0);
+    show('sHome');
+    refreshHome();
+  } catch (e) {
+    document.getElementById('sLoad').innerHTML =
+      `<p style="color:#dc2626;text-align:center;padding:32px">
+        No se pudo cargar plants.json.<br>
+        Abre el archivo desde un servidor local<br>
+        (ej: <code>npx serve .</code> o Live Server en VS Code).
+      </p>`;
+  }
+}
+
+// ── NAVIGATION ────────────────────────────────────────────────
+function show(id) {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  const onHome = id === 'sHome' || id === 'sLoad';
+  document.getElementById('btnBack').classList.toggle('hidden', onHome);
+}
+
+function goHome() {
+  show('sHome');
+  refreshHome();
+}
+
+// ── HOME ──────────────────────────────────────────────────────
+function refreshHome() {
+  const errs    = (LS.get('errors') || []).length;
+  const history = LS.get('history') || [];
+  const best    = history.length ? Math.max(...history.map(h => h.pct)) + '%' : '—';
+  document.getElementById('stPlants').textContent = plants.length;
+  document.getElementById('stTests').textContent  = history.length;
+  document.getElementById('stBest').textContent   = best;
+  document.getElementById('stErrs').textContent   = errs;
+  document.getElementById('errBadge').textContent = `⚠️ ${errs} errores`;
+}
+
+// ── UTILS ─────────────────────────────────────────────────────
+function shuffle(a) {
+  const b = [...a];
+  for (let i = b.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [b[i], b[j]] = [b[j], b[i]];
+  }
+  return b;
+}
+
+function placeholderSrc() {
+  return "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 200 200'%3E%3Crect fill='%23d1fae5' width='200' height='200'/%3E%3Ctext x='50%25' y='50%25' dominant-baseline='middle' text-anchor='middle' font-size='52'%3E🌿%3C/text%3E%3C/svg%3E";
+}
+
+function makeImg(src, alt) {
+  const img = document.createElement('img');
+  img.src = src;
+  img.alt = alt || '';
+  img.onerror = () => { img.src = placeholderSrc(); };
+  return img;
+}
+
+// ── TEST MODE ─────────────────────────────────────────────────
+function startTest() {
+  const pool = shuffle(plants).slice(0, 50);
+  qs = pool.map(plant => {
+    const wrongs = shuffle(plants.filter(p => p.name !== plant.name)).slice(0, 3);
+    return { plant, opts: shuffle([plant, ...wrongs]), sel: null };
+  });
+  qIdx = 0;
+  buildDots();
+  renderQ();
+  show('sTest');
+}
+
+function buildDots() {
+  const c = document.getElementById('qDots');
+  c.innerHTML = '';
+  qs.forEach((_, i) => {
+    const d = document.createElement('div');
+    d.className = 'dot';
+    d.title = `Pregunta ${i + 1}`;
+    d.onclick = () => { qIdx = i; renderQ(); };
+    c.appendChild(d);
+  });
+}
+
+function renderQ() {
+  const q = qs[qIdx];
+  const tot = qs.length;
+  const ans = qs.filter(x => x.sel !== null).length;
+
+  // progress
+  document.getElementById('progFill').style.width = ((qIdx + 1) / tot * 100) + '%';
+  document.getElementById('progTxt').textContent  = `Pregunta ${qIdx + 1} de ${tot}`;
+  document.getElementById('progAns').textContent  = `${ans} respondidas`;
+
+  // dots
+  document.querySelectorAll('.dot').forEach((d, i) => {
+    d.className = 'dot' +
+      (qs[i].sel !== null ? ' ans' : '') +
+      (i === qIdx ? ' cur' : '');
+  });
+
+  // images
+  const ic = document.getElementById('qImgs');
+  ic.innerHTML = '';
+  q.plant.imgs.slice(0, 2).forEach(src => ic.appendChild(makeImg(src, q.plant.name)));
+
+  // options
+  const oc = document.getElementById('qOpts');
+  oc.innerHTML = '';
+  const letters = ['A', 'B', 'C', 'D'];
+  q.opts.forEach((opt, i) => {
+    const b = document.createElement('button');
+    b.className = 'opt' + (q.sel === opt.name ? ' sel' : '');
+    b.innerHTML = `<span class="opt-ltr">${letters[i]}</span>${opt.name}`;
+    b.onclick = () => { qs[qIdx].sel = opt.name; renderQ(); };
+    oc.appendChild(b);
+  });
+
+  document.getElementById('btnPrev').disabled = qIdx === 0;
+  document.getElementById('btnNext').disabled = qIdx === tot - 1;
+}
+
+function prevQ() { if (qIdx > 0) { qIdx--; renderQ(); } }
+function nextQ() { if (qIdx < qs.length - 1) { qIdx++; renderQ(); } }
+
+function askFinish() {
+  const skip = qs.filter(q => q.sel === null).length;
+  if (skip > 0 && !confirm(`Tienes ${skip} pregunta(s) sin responder. ¿Finalizar igualmente?`)) return;
+  finishTest();
+}
+
+function finishTest() {
+  let correct = 0;
+  const newErrs = [];
+  qs.forEach(q => {
+    if (q.sel === q.plant.name) correct++;
+    else newErrs.push(q.plant.name);
+  });
+
+  const tot  = qs.length;
+  const pct  = Math.round(correct / tot * 100);
+  const pass = correct > 30;
+
+  // persist
+  const allErrs = [...new Set([...(LS.get('errors') || []), ...newErrs])];
+  LS.set('errors', allErrs);
+  const hist = LS.get('history') || [];
+  hist.push({ date: new Date().toISOString(), correct, tot, pct });
+  LS.set('history', hist);
+
+  // render
+  const ring = document.getElementById('ring');
+  ring.className = 'score-ring ' + (pass ? 'pass' : 'fail');
+  document.getElementById('rPct').textContent  = pct + '%';
+  document.getElementById('rFrac').textContent = `${correct}/${tot} correctas`;
+  document.getElementById('rOk').textContent   = `✓ ${correct} correctas`;
+  document.getElementById('rKo').textContent   = `✗ ${tot - correct} incorrectas`;
+
+  if (pass) {
+    document.getElementById('rTitle').textContent = '¡Enhorabuena! 🎉';
+    document.getElementById('rSub').textContent   = `Has aprobado con un ${pct}%. ¡Sigue así!`;
+    confetti();
+  } else {
+    document.getElementById('rTitle').textContent = '¡Sigue practicando! 💪';
+    document.getElementById('rSub').textContent   = `Has obtenido un ${pct}%. Repasa los errores y vuelve a intentarlo.`;
+  }
+  show('sResults');
+}
+
+// ── STUDY MODE ────────────────────────────────────────────────
+function startStudy() {
+  studyHist = [];
+  nextStudyCard();
+  show('sStudy');
+}
+
+function nextStudyCard() {
+  const recents = studyHist.slice(-Math.min(12, plants.length - 1));
+  const pool = plants.filter(p => !recents.includes(p.name));
+  const plant = (pool.length ? pool : plants)[Math.floor(Math.random() * (pool.length || plants.length))];
+  studyHist.push(plant.name);
+
+  document.getElementById('fcStudy').classList.remove('flip');
+  const c = document.getElementById('studyImgs');
+  c.innerHTML = '';
+  plant.imgs.slice(0, 2).forEach(src => c.appendChild(makeImg(src, plant.name)));
+  document.getElementById('studyName').textContent = plant.name;
+}
+
+// ── REVIEW MODE ───────────────────────────────────────────────
+function startReview() {
+  const errNames = LS.get('errors') || [];
+  revPlants = shuffle(plants.filter(p => errNames.includes(p.name)));
+  revIdx = 0;
+
+  const hasErrs = revPlants.length > 0;
+  document.getElementById('revEmpty').style.display   = hasErrs ? 'none'  : 'block';
+  document.getElementById('revContent').style.display = hasErrs ? 'block' : 'none';
+  if (hasErrs) renderRevCard();
+  show('sReview');
+}
+
+function renderRevCard() {
+  const p = revPlants[revIdx];
+  document.getElementById('fcReview').classList.remove('flip');
+  const c = document.getElementById('revImgs');
+  c.innerHTML = '';
+  p.imgs.slice(0, 2).forEach(src => c.appendChild(makeImg(src, p.name)));
+  document.getElementById('revName').textContent = p.name;
+  document.getElementById('revCtr').textContent  = `Planta ${revIdx + 1} de ${revPlants.length}`;
+}
+
+function nextRevCard() {
+  revIdx = (revIdx + 1) % revPlants.length;
+  renderRevCard();
+}
+
+// ── FLIP CARD ─────────────────────────────────────────────────
+function flipCard(id) {
+  document.getElementById(id).classList.toggle('flip');
+}
+
+// ── CONFETTI ──────────────────────────────────────────────────
+function confetti() {
+  const cvs = document.getElementById('cvs');
+  const ctx = cvs.getContext('2d');
+  cvs.width  = window.innerWidth;
+  cvs.height = window.innerHeight;
+
+  const cols = ['#22c55e','#16a34a','#86efac','#fbbf24','#60a5fa','#f472b6','#a78bfa','#fb923c'];
+  const ps = Array.from({ length: 160 }, () => ({
+    x: Math.random() * cvs.width,
+    y: Math.random() * -cvs.height,
+    w: Math.random() * 11 + 5,
+    h: Math.random() * 5 + 3,
+    col: cols[Math.floor(Math.random() * cols.length)],
+    rot: Math.random() * Math.PI * 2,
+    vx: Math.random() * 3 - 1.5,
+    vy: Math.random() * 3.5 + 1.5,
+    vr: (Math.random() - .5) * .08,
+  }));
+
+  let t = 0;
+  cancelAnimationFrame(confFrame);
+  function draw() {
+    ctx.clearRect(0, 0, cvs.width, cvs.height);
+    ps.forEach(p => {
+      p.x += p.vx; p.y += p.vy; p.rot += p.vr;
+      if (p.y > cvs.height) { p.y = -16; p.x = Math.random() * cvs.width; }
+      ctx.save();
+      ctx.translate(p.x, p.y);
+      ctx.rotate(p.rot);
+      ctx.fillStyle = p.col;
+      ctx.fillRect(-p.w / 2, -p.h / 2, p.w, p.h);
+      ctx.restore();
+    });
+    t++;
+    if (t < 320) confFrame = requestAnimationFrame(draw);
+    else ctx.clearRect(0, 0, cvs.width, cvs.height);
+  }
+  draw();
+}
+
+// ── BOOT ──────────────────────────────────────────────────────
+init();
+</script>
+</body>
+</html>
