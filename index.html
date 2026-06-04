@@ -210,7 +210,7 @@
       margin-bottom:22px;
     }
     .q-imgs img {
-      height:210px;
+      height:410px;
       max-width:100%;
       border-radius:var(--r);
       object-fit:cover;
@@ -462,7 +462,7 @@
 <div class="wrap">
 
   <!-- LOADING -->
-  <div class="loading screen active" id="sLoad">
+  <div class="loading" id="sLoad">
     <div class="spin"></div>
     <p>Cargando plantas…</p>
   </div>
@@ -613,6 +613,8 @@ const LS = {
 
 // ── INIT ──────────────────────────────────────────────────────
 async function init() {
+  const loader = document.getElementById('sLoad');
+  loader.style.display = 'flex';
   try {
     const r = await fetch('plants.json');
     const data = await r.json();
@@ -620,14 +622,15 @@ async function init() {
       name: p.name.trim(),
       imgs: (p.img || []).filter(i => i && i !== '...')
     })).filter(p => p.imgs.length > 0);
+    loader.style.display = 'none';
     show('sHome');
     refreshHome();
   } catch (e) {
-    document.getElementById('sLoad').innerHTML =
-      `<p style="color:#dc2626;text-align:center;padding:32px">
-        No se pudo cargar plants.json.<br>
-        Abre el archivo desde un servidor local<br>
-        (ej: <code>npx serve .</code> o Live Server en VS Code).
+    loader.innerHTML =
+      `<p style="color:#dc2626;text-align:center;padding:32px;max-width:360px">
+        No se pudo cargar <code>plants.json</code>.<br><br>
+        Abre el archivo desde un servidor local:<br>
+        <code>npx serve .</code> o <em>Live Server</em> en VS Code.
       </p>`;
   }
 }
@@ -636,7 +639,7 @@ async function init() {
 function show(id) {
   document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
   document.getElementById(id).classList.add('active');
-  const onHome = id === 'sHome' || id === 'sLoad';
+  const onHome = id === 'sHome';
   document.getElementById('btnBack').classList.toggle('hidden', onHome);
 }
 
