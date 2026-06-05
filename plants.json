@@ -2,7 +2,7 @@
     "p1": { "name": "Alnus glutinosa", "img": ["imgs/alnusglutinosa1.jpg", "imgs/alnuslutinosa2.jpg"] },
     "p2": { "name": "Betula sp.", "img": ["imgs/Betula sp. .jpg", "imgs/Betula sp. 2.jpg"] },
     "p3": { "name": "Carpinus betulus", "img": ["imgs/Carpinus betulus.jpg", "imgs/Carpinus betulus2.jpg"] },
-    "p4": { "name": "Corylus avellana", "img": ["imgs/Corylus avellana .jpg", "imgs/Corylus avellana 2.jpg"] },
+    "p4": { "name": "Corylus avellana", "img": ["imgs/Corylus avellana.jpg", "imgs/Corylus avellana 2.jpg"] },
     "p5": { "name": "Castanea sativa", "img": ["imgs/Castanea sativa .jpg", "imgs/Castanea sativa 2.jpg"] },
     "p6": { "name": "Fagus sylvatica", "img": ["imgs/Fagus sylvatica .jpg", "imgs/Fagus sylvatica 2.jpg"] },
     "p7": { "name": "Quercus coccifera", "img": ["imgs/Quercus coccifera.jpg", "imgs/Quercus coccifera2.jpg"] },
