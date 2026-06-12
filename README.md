@@ -1,3 +1,4 @@
+![imgBotanicaEz](https://github.com/user-attachments/assets/bd4323be-4b5f-43aa-b10b-cb4d00821c55)
 # 🌿 BotanicaEZ
 
 **Herramienta de estudio de botánica para estudiantes universitarios**
