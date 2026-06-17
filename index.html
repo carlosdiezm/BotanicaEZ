@@ -117,10 +117,14 @@
     .mode-card.test::after  { background:linear-gradient(90deg,var(--g500),var(--g700)); }
     .mode-card.study::after { background:linear-gradient(90deg,#3b82f6,#6366f1); }
     .mode-card.rev::after   { background:linear-gradient(90deg,#f59e0b,#ef4444); }
+    .mode-card.def::after   { background:linear-gradient(90deg,#8b5cf6,#7c3aed); }
+    .mode-card.lst::after   { background:linear-gradient(90deg,#06b6d4,#0891b2); }
     .mode-card:hover { transform:translateY(-4px); box-shadow:var(--shxl); }
     .mode-card.test:hover  { border-color:var(--g200); }
     .mode-card.study:hover { border-color:#dbeafe; }
     .mode-card.rev:hover   { border-color:#fef3c7; }
+    .mode-card.def:hover   { border-color:#ede9fe; }
+    .mode-card.lst:hover   { border-color:#cffafe; }
     .mode-card .ic { font-size:2.2rem; margin-bottom:14px; display:block; }
     .mode-card h2 { font-size:1.2rem; font-weight:700; margin-bottom:6px; }
     .mode-card p  { font-size:.875rem; color:var(--gray500); line-height:1.5; }
@@ -137,6 +141,8 @@
     .badge.green  { background:var(--g100); color:var(--g700); }
     .badge.blue   { background:#dbeafe; color:#1d4ed8; }
     .badge.yellow { background:#fef3c7; color:#92400e; }
+    .badge.purple { background:#ede9fe; color:#6d28d9; }
+    .badge.cyan   { background:#cffafe; color:#0e7490; }
 
     .stats-row {
       display:flex;
@@ -440,6 +446,60 @@
       z-index:9999;
     }
 
+    /* ====== LISTA ====== */
+    .lista-hdr {
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      flex-wrap:wrap;
+      gap:10px;
+      margin-bottom:20px;
+    }
+    .lista-hdr h2 { font-size:1.25rem; font-weight:700; color:var(--gray700); }
+    .lista-hdr span { font-size:.85rem; color:var(--gray400); }
+
+    .lista-grid {
+      display:grid;
+      grid-template-columns:repeat(auto-fill,minmax(160px,1fr));
+      gap:14px;
+      margin-bottom:28px;
+    }
+
+    .lc-wrap {
+      perspective:800px;
+      height:220px;
+    }
+    .lc {
+      width:100%;height:100%;
+      position:relative;
+      transform-style:preserve-3d;
+      transition:transform .5s cubic-bezier(.4,0,.2,1);
+      cursor:pointer;
+    }
+    .lc.flip { transform:rotateY(180deg); }
+    .lc .face {
+      position:absolute;
+      width:100%;height:100%;
+      backface-visibility:hidden;
+      border-radius:var(--r);
+      overflow:hidden;
+      box-shadow:var(--sh);
+    }
+    .lc-front { background:white; }
+    .lc-front img { width:100%;height:100%;object-fit:cover;display:block; }
+    .lc-back {
+      background:linear-gradient(135deg,var(--g600),var(--g900));
+      transform:rotateY(180deg);
+      display:flex;
+      flex-direction:column;
+      align-items:center;
+      justify-content:center;
+      padding:16px;
+      text-align:center;
+    }
+    .lc-back .deco { font-size:1.6rem;opacity:.25;margin-bottom:8px; }
+    .lc-back .pname { color:white;font-size:.88rem;font-weight:700;font-style:italic;line-height:1.35; }
+
     /* RESPONSIVE */
     @media(max-width:600px){
       .hero h1{font-size:1.7rem}
@@ -527,6 +587,18 @@
         <h2>Repaso de Errores</h2>
         <p>Repasa únicamente las plantas que has fallado en los tests anteriores.</p>
         <span class="badge yellow" id="errBadge">⚠️ 0 errores</span>
+      </div>
+      <div class="mode-card def" onclick="startDefinitivo()">
+        <span class="ic">🏅</span>
+        <h2>Modo Definitivo</h2>
+        <p>El desafío completo: todas las plantas del catálogo en un único test sin límite.</p>
+        <span class="badge purple" id="defBadge">🌿 — plantas</span>
+      </div>
+      <div class="mode-card lst" onclick="startLista()">
+        <span class="ic">🗂️</span>
+        <h2>Modo Lista</h2>
+        <p>Explora todas las plantas en cuadrícula. Toca cada tarjeta para ver su nombre.</p>
+        <span class="badge cyan" id="lstBadge">🌿 — plantas</span>
       </div>
     </div>
     <div class="stats-row">
@@ -628,6 +700,18 @@
     </div>
   </div>
 
+  <!-- LISTA -->
+  <div class="screen" id="sLista">
+    <div class="lista-hdr">
+      <h2>Catálogo completo</h2>
+      <span id="listaCount"></span>
+    </div>
+    <div class="lista-grid" id="listaGrid"></div>
+    <div style="text-align:center;margin-bottom:32px">
+      <button class="btn sec" onclick="goHome()">← Inicio</button>
+    </div>
+  </div>
+
 </div><!-- /wrap -->
 
 <a class="dev-badge" href="https://github.com/carlosdiezm" target="_blank" rel="noopener">
@@ -643,6 +727,7 @@
 let plants = [];
 let qs = [];       // test questions
 let qIdx = 0;
+let currentMode = 'test';
 let studyHist = [];
 let revPlants = [];
 let revIdx = 0;
@@ -701,6 +786,8 @@ function refreshHome() {
   document.getElementById('stBest').textContent   = best;
   document.getElementById('stErrs').textContent   = errs;
   document.getElementById('errBadge').textContent = `⚠️ ${errs} errores`;
+  document.getElementById('defBadge').textContent = `🌿 ${plants.length} plantas`;
+  document.getElementById('lstBadge').textContent = `🌿 ${plants.length} plantas`;
 }
 
 // ── UTILS ─────────────────────────────────────────────────────
@@ -727,7 +814,21 @@ function makeImg(src, alt) {
 
 // ── TEST MODE ─────────────────────────────────────────────────
 function startTest() {
+  currentMode = 'test';
   const pool = shuffle(plants).slice(0, 50);
+  qs = pool.map(plant => {
+    const wrongs = shuffle(plants.filter(p => p.name !== plant.name)).slice(0, 3);
+    return { plant, opts: shuffle([plant, ...wrongs]), sel: null };
+  });
+  qIdx = 0;
+  buildDots();
+  renderQ();
+  show('sTest');
+}
+
+function startDefinitivo() {
+  currentMode = 'definitivo';
+  const pool = shuffle(plants);
   qs = pool.map(plant => {
     const wrongs = shuffle(plants.filter(p => p.name !== plant.name)).slice(0, 3);
     return { plant, opts: shuffle([plant, ...wrongs]), sel: null };
@@ -807,7 +908,7 @@ function finishTest() {
 
   const tot  = qs.length;
   const pct  = Math.round(correct / tot * 100);
-  const pass = correct > 30;
+  const pass = pct >= 60;
 
   // persist
   const allErrs = [...new Set([...(LS.get('errors') || []), ...newErrs])];
@@ -825,14 +926,67 @@ function finishTest() {
   document.getElementById('rKo').textContent   = `✗ ${tot - correct} incorrectas`;
 
   if (pass) {
-    document.getElementById('rTitle').textContent = '¡Enhorabuena! 🎉';
+    document.getElementById('rTitle').textContent = currentMode === 'definitivo' ? '¡Maestro botánico! 🏅' : '¡Enhorabuena! 🎉';
     document.getElementById('rSub').textContent   = `Has aprobado con un ${pct}%. ¡Sigue así!`;
     confetti();
   } else {
     document.getElementById('rTitle').textContent = '¡Sigue practicando! 💪';
     document.getElementById('rSub').textContent   = `Has obtenido un ${pct}%. Repasa los errores y vuelve a intentarlo.`;
   }
+
+  document.querySelector('.res-acts').innerHTML = currentMode === 'definitivo'
+    ? `<button class="btn pri" onclick="startDefinitivo()">Nuevo definitivo</button>
+       <button class="btn sec" onclick="startTest()">Modo Test</button>
+       <button class="btn sec" onclick="startReview()">Repasar errores</button>
+       <button class="btn sec" onclick="goHome()">Inicio</button>`
+    : `<button class="btn pri" onclick="startTest()">Nuevo test</button>
+       <button class="btn sec" onclick="startReview()">Repasar errores</button>
+       <button class="btn sec" onclick="goHome()">Inicio</button>`;
+
   show('sResults');
+}
+
+// ── LISTA MODE ────────────────────────────────────────────────
+function startLista() {
+  const sorted = [...plants].sort((a, b) => a.name.localeCompare(b.name));
+  const grid = document.getElementById('listaGrid');
+  grid.innerHTML = '';
+  document.getElementById('listaCount').textContent = `${sorted.length} plantas`;
+
+  sorted.forEach(plant => {
+    const wrap = document.createElement('div');
+    wrap.className = 'lc-wrap';
+
+    const card = document.createElement('div');
+    card.className = 'lc';
+    card.onclick = () => card.classList.toggle('flip');
+
+    const front = document.createElement('div');
+    front.className = 'face lc-front';
+    front.appendChild(makeImg(plant.imgs[0], plant.name));
+    const hint = document.createElement('div');
+    hint.className = 'tap-hint';
+    hint.textContent = 'Toca para ver';
+    front.appendChild(hint);
+
+    const back = document.createElement('div');
+    back.className = 'face lc-back';
+    const deco = document.createElement('div');
+    deco.className = 'deco';
+    deco.textContent = '🌿';
+    const name = document.createElement('div');
+    name.className = 'pname';
+    name.textContent = plant.name;
+    back.appendChild(deco);
+    back.appendChild(name);
+
+    card.appendChild(front);
+    card.appendChild(back);
+    wrap.appendChild(card);
+    grid.appendChild(wrap);
+  });
+
+  show('sLista');
 }
 
 // ── STUDY MODE ────────────────────────────────────────────────
