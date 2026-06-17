@@ -24,14 +24,20 @@ El proyecto nació a petición de un estudiante que necesitaba una manera práct
 
 ## ✨ Modos de estudio
 
-### 🧪 Modo Test
-Responde 50 preguntas de tipo test: se muestra una fotografía de una planta o hongo y debes elegir el nombre correcto entre 4 opciones. Al finalizar, obtienes tu puntuación y se registran los errores para el modo repaso.
+### 📝 Modo Test
+Responde 50 preguntas aleatorias: se muestra una fotografía de una planta o hongo y debes elegir el nombre correcto entre 4 opciones. Al finalizar, obtienes tu puntuación y se registran los errores para el modo repaso.
 
 ### 📚 Modo Estudio
 Tarjetas interactivas con fotografías de cada especie. Haz tap en cada tarjeta para darle la vuelta y revelar el nombre científico. Ideal para un primer contacto con el catálogo o para repasar de forma relajada.
 
-### 🔁 Modo Repaso de Errores
+### 🔍 Modo Repaso de Errores
 Recoge automáticamente las preguntas falladas en el Modo Test y las presenta en formato tarjetas. Así puedes centrarte en las especies que más te cuestan sin perder tiempo con las que ya dominas.
+
+### 🏅 Modo Definitivo
+El desafío completo: todas las plantas del catálogo en un único test sin límite de preguntas. Las preguntas se presentan en orden aleatorio y el test no termina hasta que hayas respondido cada especie del catálogo. Si apruebas, el título cambia a *¡Maestro botánico!*
+
+### 🗂️ Modo Lista
+Explora todas las plantas del catálogo en una cuadrícula ordenada alfabéticamente. Toca cada tarjeta para girarla y ver el nombre científico. Perfecto para repasar el catálogo completo de un vistazo, sin presión de tiempo ni puntuación.
 
 ---
 
