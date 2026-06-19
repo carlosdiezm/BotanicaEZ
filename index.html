@@ -812,6 +812,10 @@
 
   <!-- SABIO -->
   <div class="screen" id="sSabio">
+    <div class="test-toggle-row">
+      <button class="tgl-opt" id="tglSabioAcOn" onclick="setSabioAC(true)">💡 Con autocompletado</button>
+      <button class="tgl-opt" id="tglSabioAcOff" onclick="setSabioAC(false)">✍️ Sin autocompletado</button>
+    </div>
     <div class="prog-wrap"><div class="prog-fill" id="sabioProgFill" style="width:0%"></div></div>
     <div class="prog-labels">
       <span id="sabioProgTxt">Planta 1</span>
@@ -1137,11 +1141,26 @@ let sabioIdx = 0;
 let sabioCorrect = 0;
 let sabioAnswered = false;
 let sabioDdHi = -1;
+let sabioAutocomplete = true;
+
+function setSabioAC(on) {
+  sabioAutocomplete = on;
+  LS.set('sabioAC', on);
+  updateSabioACUI();
+  if (!on) closeSabioDd();
+}
+
+function updateSabioACUI() {
+  document.getElementById('tglSabioAcOn').classList.toggle('active', sabioAutocomplete);
+  document.getElementById('tglSabioAcOff').classList.toggle('active', !sabioAutocomplete);
+}
 
 function startSabio() {
+  sabioAutocomplete = LS.get('sabioAC') !== false;
   sabioQs = shuffle(plants);
   sabioIdx = 0;
   sabioCorrect = 0;
+  updateSabioACUI();
   renderSabio();
   show('sSabio');
 }
@@ -1255,7 +1274,7 @@ function finishSabio() {
 
 // ── SABIO AUTOCOMPLETE ─────────────────────────────────────────
 function sabioOnInput(val) {
-  if (!val || val.length < 1) { closeSabioDd(); return; }
+  if (!sabioAutocomplete || !val || val.length < 1) { closeSabioDd(); return; }
   const lower   = val.toLowerCase();
   const matches = plants
     .map(p => p.name)

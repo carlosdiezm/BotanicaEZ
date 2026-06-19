@@ -44,7 +44,13 @@ El desafío completo: todas las plantas del catálogo en un único test sin lím
 Explora todas las plantas del catálogo en una cuadrícula ordenada alfabéticamente. Toca cada tarjeta para girarla y ver el nombre científico. Perfecto para repasar el catálogo completo de un vistazo, sin presión de tiempo ni puntuación.
 
 ### 🧠 Modo Sabio de las Plantas
-El reto máximo: se muestran las imágenes de cada planta del catálogo (en orden aleatorio) y debes **escribir tú mismo el nombre** sin opciones de ayuda. El modo incluye **autocompletado inteligente** — a medida que escribes aparecen sugerencias filtradas con la parte coincidente resaltada, navegables con las teclas de flecha. Los errores se guardan en el banco de repaso y al terminar obtienes tu puntuación.
+El reto máximo: se muestran las imágenes de cada planta del catálogo (en orden aleatorio) y debes **escribir tú mismo el nombre** sin opciones de ayuda.
+
+Incluye un **toggle de autocompletado** para ajustar la dificultad:
+- **💡 Con autocompletado** — a medida que escribes aparecen sugerencias filtradas con la parte coincidente resaltada, navegables con las teclas de flecha.
+- **✍️ Sin autocompletado** — el campo de texto está limpio y debes escribir el nombre de memoria sin ninguna ayuda. La preferencia se guarda automáticamente.
+
+Los errores se guardan en el banco de repaso y al terminar obtienes tu puntuación.
 
 ---
 
