@@ -27,6 +27,10 @@ El proyecto nació a petición de un estudiante que necesitaba una manera práct
 ### 📝 Modo Test
 Responde 50 preguntas aleatorias: se muestra una fotografía de una planta o hongo y debes elegir el nombre correcto entre 4 opciones. Al finalizar, obtienes tu puntuación y se registran los errores para el modo repaso.
 
+Incluye un **toggle de feedback** con dos modos de corrección:
+- **📋 Revelar al final** — terminas el test completo y ves los resultados al final (comportamiento clásico).
+- **⚡ Feedback inmediato** — cada opción se colorea en verde o rojo en el momento de responder, y se revela la respuesta correcta antes de pasar a la siguiente pregunta. La preferencia se guarda automáticamente.
+
 ### 📚 Modo Estudio
 Tarjetas interactivas con fotografías de cada especie. Haz tap en cada tarjeta para darle la vuelta y revelar el nombre científico. Ideal para un primer contacto con el catálogo o para repasar de forma relajada.
 
@@ -38,6 +42,9 @@ El desafío completo: todas las plantas del catálogo en un único test sin lím
 
 ### 🗂️ Modo Lista
 Explora todas las plantas del catálogo en una cuadrícula ordenada alfabéticamente. Toca cada tarjeta para girarla y ver el nombre científico. Perfecto para repasar el catálogo completo de un vistazo, sin presión de tiempo ni puntuación.
+
+### 🧠 Modo Sabio de las Plantas
+El reto máximo: se muestran las imágenes de cada planta del catálogo (en orden aleatorio) y debes **escribir tú mismo el nombre** sin opciones de ayuda. El modo incluye **autocompletado inteligente** — a medida que escribes aparecen sugerencias filtradas con la parte coincidente resaltada, navegables con las teclas de flecha. Los errores se guardan en el banco de repaso y al terminar obtienes tu puntuación.
 
 ---
 

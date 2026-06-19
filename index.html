@@ -119,12 +119,14 @@
     .mode-card.rev::after   { background:linear-gradient(90deg,#f59e0b,#ef4444); }
     .mode-card.def::after   { background:linear-gradient(90deg,#8b5cf6,#7c3aed); }
     .mode-card.lst::after   { background:linear-gradient(90deg,#06b6d4,#0891b2); }
+    .mode-card.sabio::after { background:linear-gradient(90deg,#d97706,#92400e); }
     .mode-card:hover { transform:translateY(-4px); box-shadow:var(--shxl); }
     .mode-card.test:hover  { border-color:var(--g200); }
     .mode-card.study:hover { border-color:#dbeafe; }
     .mode-card.rev:hover   { border-color:#fef3c7; }
     .mode-card.def:hover   { border-color:#ede9fe; }
     .mode-card.lst:hover   { border-color:#cffafe; }
+    .mode-card.sabio:hover { border-color:#fde68a; }
     .mode-card .ic { font-size:2.2rem; margin-bottom:14px; display:block; }
     .mode-card h2 { font-size:1.2rem; font-weight:700; margin-bottom:6px; }
     .mode-card p  { font-size:.875rem; color:var(--gray500); line-height:1.5; }
@@ -143,6 +145,7 @@
     .badge.yellow { background:#fef3c7; color:#92400e; }
     .badge.purple { background:#ede9fe; color:#6d28d9; }
     .badge.cyan   { background:#cffafe; color:#0e7490; }
+    .badge.amber  { background:#fde68a; color:#78350f; }
 
     .stats-row {
       display:flex;
@@ -550,6 +553,52 @@
     .lc-back .deco { font-size:1.6rem;opacity:.25;margin-bottom:8px; }
     .lc-back .pname { color:white;font-size:.88rem;font-weight:700;font-style:italic;line-height:1.35; }
 
+    /* ====== SABIO ====== */
+    .sabio-input-wrap {
+      position:relative;
+      margin-top:6px;
+    }
+    .sabio-input {
+      width:100%;
+      padding:14px 18px;
+      border:2px solid var(--gray200);
+      border-radius:var(--r);
+      font-size:1rem;
+      font-family:var(--font);
+      color:var(--gray800);
+      outline:none;
+      transition:border-color var(--tr), background var(--tr);
+      background:white;
+    }
+    .sabio-input:focus { border-color:var(--g400); }
+    .sabio-input.ok   { border-color:var(--g500); background:var(--g50); }
+    .sabio-input.ko   { border-color:#ef4444;      background:#fef2f2; }
+    .sabio-input:disabled { opacity:1; cursor:default; }
+    .sabio-dd {
+      position:absolute;
+      top:calc(100% - 2px);
+      left:0; right:0;
+      background:white;
+      border:2px solid var(--g400);
+      border-top:none;
+      border-radius:0 0 var(--r) var(--r);
+      box-shadow:var(--shl);
+      z-index:50;
+      max-height:224px;
+      overflow-y:auto;
+      display:none;
+    }
+    .sabio-dd.open { display:block; }
+    .sabio-sug {
+      padding:10px 18px;
+      font-size:.9rem;
+      cursor:pointer;
+      color:var(--gray700);
+      transition:background var(--tr);
+    }
+    .sabio-sug:hover, .sabio-sug.hi { background:var(--g50); color:var(--g800); }
+    .sabio-sug mark { background:var(--g200); color:var(--g900); border-radius:2px; font-style:normal; }
+
     /* RESPONSIVE */
     @media(max-width:600px){
       .hero h1{font-size:1.7rem}
@@ -649,6 +698,12 @@
         <h2>Modo Lista</h2>
         <p>Explora todas las plantas en cuadrícula. Toca cada tarjeta para ver su nombre.</p>
         <span class="badge cyan" id="lstBadge">🌿 — plantas</span>
+      </div>
+      <div class="mode-card sabio" onclick="startSabio()">
+        <span class="ic">🧠</span>
+        <h2>Sabio de las Plantas</h2>
+        <p>El reto definitivo: escribe el nombre de cada planta sin opciones. Autocompletado disponible.</p>
+        <span class="badge amber" id="sabioBadge">✍️ — plantas</span>
       </div>
     </div>
     <div class="stats-row">
@@ -755,6 +810,37 @@
     </div>
   </div>
 
+  <!-- SABIO -->
+  <div class="screen" id="sSabio">
+    <div class="prog-wrap"><div class="prog-fill" id="sabioProgFill" style="width:0%"></div></div>
+    <div class="prog-labels">
+      <span id="sabioProgTxt">Planta 1</span>
+      <span id="sabioProgAns">0 respondidas</span>
+    </div>
+    <div class="q-card">
+      <div class="q-imgs" id="sabioImgs"></div>
+      <div class="sabio-input-wrap">
+        <input
+          type="text"
+          id="sabioInput"
+          class="sabio-input"
+          placeholder="Escribe el nombre de la planta…"
+          autocomplete="off"
+          spellcheck="false"
+          oninput="sabioOnInput(this.value)"
+          onkeydown="sabioOnKey(event)"
+          onblur="setTimeout(closeSabioDd,150)"
+        >
+        <div class="sabio-dd" id="sabioDd"></div>
+      </div>
+      <div class="q-feedback" id="sabioFeedback"></div>
+    </div>
+    <div class="nav-row">
+      <button class="btn sec" onclick="goHome()">← Inicio</button>
+      <button class="btn pri" id="sabioBtnCheck" onclick="checkSabio()">Comprobar →</button>
+    </div>
+  </div>
+
   <!-- LISTA -->
   <div class="screen" id="sLista">
     <div class="lista-hdr">
@@ -842,8 +928,9 @@ function refreshHome() {
   document.getElementById('stBest').textContent   = best;
   document.getElementById('stErrs').textContent   = errs;
   document.getElementById('errBadge').textContent = `⚠️ ${errs} errores`;
-  document.getElementById('defBadge').textContent = `🌿 ${plants.length} plantas`;
-  document.getElementById('lstBadge').textContent = `🌿 ${plants.length} plantas`;
+  document.getElementById('defBadge').textContent   = `🌿 ${plants.length} plantas`;
+  document.getElementById('lstBadge').textContent   = `🌿 ${plants.length} plantas`;
+  document.getElementById('sabioBadge').textContent = `✍️ ${plants.length} plantas`;
 }
 
 // ── UTILS ─────────────────────────────────────────────────────
@@ -1042,6 +1129,199 @@ function finishTest() {
        <button class="btn sec" onclick="goHome()">Inicio</button>`;
 
   show('sResults');
+}
+
+// ── SABIO MODE ────────────────────────────────────────────────
+let sabioQs = [];
+let sabioIdx = 0;
+let sabioCorrect = 0;
+let sabioAnswered = false;
+let sabioDdHi = -1;
+
+function startSabio() {
+  sabioQs = shuffle(plants);
+  sabioIdx = 0;
+  sabioCorrect = 0;
+  renderSabio();
+  show('sSabio');
+}
+
+function renderSabio() {
+  sabioAnswered = false;
+  sabioDdHi = -1;
+  const plant = sabioQs[sabioIdx];
+  const tot   = sabioQs.length;
+
+  document.getElementById('sabioProgFill').style.width = ((sabioIdx + 1) / tot * 100) + '%';
+  document.getElementById('sabioProgTxt').textContent  = `Planta ${sabioIdx + 1} de ${tot}`;
+  document.getElementById('sabioProgAns').textContent  = `${sabioIdx} respondidas`;
+
+  const ic = document.getElementById('sabioImgs');
+  ic.innerHTML = '';
+  plant.imgs.slice(0, 2).forEach(src => ic.appendChild(makeImg(src, plant.name)));
+
+  const inp = document.getElementById('sabioInput');
+  inp.value    = '';
+  inp.disabled = false;
+  inp.className = 'sabio-input';
+
+  closeSabioDd();
+
+  const fb = document.getElementById('sabioFeedback');
+  fb.style.display = 'none';
+
+  const btn = document.getElementById('sabioBtnCheck');
+  btn.textContent = 'Comprobar →';
+  btn.onclick = checkSabio;
+
+  setTimeout(() => inp.focus(), 50);
+}
+
+function checkSabio() {
+  if (sabioAnswered) {
+    sabioIdx++;
+    if (sabioIdx < sabioQs.length) renderSabio();
+    else finishSabio();
+    return;
+  }
+
+  const inp   = document.getElementById('sabioInput');
+  const val   = inp.value.trim();
+  if (!val) { inp.focus(); return; }
+
+  const plant     = sabioQs[sabioIdx];
+  const isCorrect = val.toLowerCase() === plant.name.toLowerCase();
+
+  sabioAnswered = true;
+  closeSabioDd();
+  inp.disabled = true;
+
+  if (isCorrect) {
+    sabioCorrect++;
+    inp.className = 'sabio-input ok';
+  } else {
+    inp.className = 'sabio-input ko';
+    const allErrs = [...new Set([...(LS.get('errors') || []), plant.name])];
+    LS.set('errors', allErrs);
+  }
+
+  const fb = document.getElementById('sabioFeedback');
+  fb.style.display = '';
+  if (isCorrect) {
+    fb.className = 'q-feedback ok';
+    fb.textContent = '✓ ¡Correcto!';
+  } else {
+    fb.className = 'q-feedback ko';
+    fb.innerHTML = `✗ La respuesta correcta era <strong>${plant.name}</strong>`;
+  }
+
+  const btn = document.getElementById('sabioBtnCheck');
+  btn.textContent = sabioIdx < sabioQs.length - 1 ? 'Siguiente →' : 'Ver resultados';
+  btn.onclick = checkSabio;
+}
+
+function finishSabio() {
+  const tot  = sabioQs.length;
+  const pct  = Math.round(sabioCorrect / tot * 100);
+  const pass = pct >= 60;
+
+  const ring = document.getElementById('ring');
+  ring.className = 'score-ring ' + (pass ? 'pass' : 'fail');
+  document.getElementById('rPct').textContent  = pct + '%';
+  document.getElementById('rFrac').textContent = `${sabioCorrect}/${tot} correctas`;
+  document.getElementById('rOk').textContent   = `✓ ${sabioCorrect} correctas`;
+  document.getElementById('rKo').textContent   = `✗ ${tot - sabioCorrect} incorrectas`;
+
+  if (pass) {
+    document.getElementById('rTitle').textContent = '¡Sabio de las plantas! 🧠';
+    document.getElementById('rSub').textContent   = `Has acertado un ${pct}%. ¡Conocimiento impresionante!`;
+    confetti();
+  } else {
+    document.getElementById('rTitle').textContent = '¡Sigue practicando! 💪';
+    document.getElementById('rSub').textContent   = `Has obtenido un ${pct}%. Repasa los errores y vuelve a intentarlo.`;
+  }
+
+  document.querySelector('.res-acts').innerHTML =
+    `<button class="btn pri" onclick="startSabio()">Nuevo Sabio</button>
+     <button class="btn sec" onclick="startReview()">Repasar errores</button>
+     <button class="btn sec" onclick="goHome()">Inicio</button>`;
+
+  const hist = LS.get('history') || [];
+  hist.push({ date: new Date().toISOString(), correct: sabioCorrect, tot, pct, mode: 'sabio' });
+  LS.set('history', hist);
+
+  show('sResults');
+}
+
+// ── SABIO AUTOCOMPLETE ─────────────────────────────────────────
+function sabioOnInput(val) {
+  if (!val || val.length < 1) { closeSabioDd(); return; }
+  const lower   = val.toLowerCase();
+  const matches = plants
+    .map(p => p.name)
+    .filter(n => n.toLowerCase().includes(lower))
+    .sort((a, b) => {
+      const ai = a.toLowerCase().indexOf(lower);
+      const bi = b.toLowerCase().indexOf(lower);
+      return ai !== bi ? ai - bi : a.localeCompare(b);
+    })
+    .slice(0, 8);
+
+  const dd = document.getElementById('sabioDd');
+  if (!matches.length) { closeSabioDd(); return; }
+
+  sabioDdHi = -1;
+  dd.innerHTML = '';
+  matches.forEach(name => {
+    const div  = document.createElement('div');
+    div.className = 'sabio-sug';
+    const idx  = name.toLowerCase().indexOf(lower);
+    div.innerHTML  = name.slice(0, idx)
+      + '<mark>' + name.slice(idx, idx + val.length) + '</mark>'
+      + name.slice(idx + val.length);
+    div.onmousedown = e => {
+      e.preventDefault();
+      document.getElementById('sabioInput').value = name;
+      closeSabioDd();
+    };
+    dd.appendChild(div);
+  });
+  dd.classList.add('open');
+}
+
+function sabioOnKey(e) {
+  const dd    = document.getElementById('sabioDd');
+  const items = dd.querySelectorAll('.sabio-sug');
+
+  if (e.key === 'ArrowDown') {
+    e.preventDefault();
+    sabioDdHi = Math.min(sabioDdHi + 1, items.length - 1);
+    items.forEach((el, i) => el.classList.toggle('hi', i === sabioDdHi));
+  } else if (e.key === 'ArrowUp') {
+    e.preventDefault();
+    sabioDdHi = Math.max(sabioDdHi - 1, -1);
+    items.forEach((el, i) => el.classList.toggle('hi', i === sabioDdHi));
+  } else if (e.key === 'Enter') {
+    e.preventDefault();
+    if (sabioDdHi >= 0 && items[sabioDdHi]) {
+      document.getElementById('sabioInput').value = items[sabioDdHi].textContent;
+      closeSabioDd();
+    } else {
+      checkSabio();
+    }
+  } else if (e.key === 'Tab' && sabioDdHi >= 0 && items[sabioDdHi]) {
+    e.preventDefault();
+    document.getElementById('sabioInput').value = items[sabioDdHi].textContent;
+    closeSabioDd();
+  } else if (e.key === 'Escape') {
+    closeSabioDd();
+  }
+}
+
+function closeSabioDd() {
+  const dd = document.getElementById('sabioDd');
+  if (dd) { dd.classList.remove('open'); dd.innerHTML = ''; }
+  sabioDdHi = -1;
 }
 
 // ── LISTA MODE ────────────────────────────────────────────────
