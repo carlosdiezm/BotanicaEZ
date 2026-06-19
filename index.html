@@ -292,6 +292,56 @@
     .btn.red:hover { background:linear-gradient(135deg,#dc2626,#b91c1c); }
     .btn:disabled { opacity:.4; cursor:not-allowed; transform:none!important; }
 
+    /* ====== TEST TOGGLE ====== */
+    .test-toggle-row {
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      gap:6px;
+      margin-bottom:14px;
+    }
+    .tgl-opt {
+      padding:7px 16px;
+      border-radius:999px;
+      font-size:.8rem;
+      font-weight:600;
+      cursor:pointer;
+      border:2px solid var(--gray200);
+      background:white;
+      color:var(--gray500);
+      transition:all var(--tr);
+      font-family:var(--font);
+    }
+    .tgl-opt.active {
+      background:var(--g600);
+      color:white;
+      border-color:var(--g600);
+    }
+    .opt.correct {
+      background:var(--g100);
+      border-color:var(--g500);
+      color:var(--g800);
+    }
+    .opt.correct .opt-ltr { background:var(--g500); color:white; }
+    .opt.wrong {
+      background:#fee2e2;
+      border-color:#ef4444;
+      color:#991b1b;
+    }
+    .opt.wrong .opt-ltr { background:#ef4444; color:white; }
+    .opt:disabled { opacity:1; cursor:default; }
+    .q-feedback {
+      margin-top:14px;
+      padding:10px 16px;
+      border-radius:var(--rsm);
+      font-size:.9rem;
+      font-weight:600;
+      text-align:center;
+      display:none;
+    }
+    .q-feedback.ok { background:var(--g100); color:var(--g700); }
+    .q-feedback.ko { background:#fee2e2; color:#dc2626; }
+
     /* ====== RESULTS ====== */
     .res-card {
       background:white;
@@ -611,6 +661,10 @@
 
   <!-- TEST -->
   <div class="screen" id="sTest">
+    <div class="test-toggle-row">
+      <button class="tgl-opt" id="tglDeferred" onclick="setFeedbackMode('deferred')">📋 Revelar al final</button>
+      <button class="tgl-opt" id="tglImmediate" onclick="setFeedbackMode('immediate')">⚡ Feedback inmediato</button>
+    </div>
     <div class="prog-wrap"><div class="prog-fill" id="progFill" style="width:0%"></div></div>
     <div class="prog-labels">
       <span id="progTxt">Pregunta 1 de 50</span>
@@ -620,6 +674,7 @@
     <div class="q-card">
       <div class="q-imgs" id="qImgs"></div>
       <div class="opts" id="qOpts"></div>
+      <div class="q-feedback" id="qFeedback"></div>
     </div>
     <div class="nav-row">
       <button class="btn sec" id="btnPrev" onclick="prevQ()">← Anterior</button>
@@ -728,6 +783,7 @@ let plants = [];
 let qs = [];       // test questions
 let qIdx = 0;
 let currentMode = 'test';
+let feedbackMode = 'deferred'; // 'deferred' | 'immediate'
 let studyHist = [];
 let revPlants = [];
 let revIdx = 0;
@@ -813,8 +869,21 @@ function makeImg(src, alt) {
 }
 
 // ── TEST MODE ─────────────────────────────────────────────────
+function setFeedbackMode(mode) {
+  feedbackMode = mode;
+  LS.set('feedbackMode', mode);
+  updateToggleUI();
+  renderQ();
+}
+
+function updateToggleUI() {
+  document.getElementById('tglDeferred').classList.toggle('active', feedbackMode === 'deferred');
+  document.getElementById('tglImmediate').classList.toggle('active', feedbackMode === 'immediate');
+}
+
 function startTest() {
   currentMode = 'test';
+  feedbackMode = LS.get('feedbackMode') || 'deferred';
   const pool = shuffle(plants).slice(0, 50);
   qs = pool.map(plant => {
     const wrongs = shuffle(plants.filter(p => p.name !== plant.name)).slice(0, 3);
@@ -822,12 +891,14 @@ function startTest() {
   });
   qIdx = 0;
   buildDots();
+  updateToggleUI();
   renderQ();
   show('sTest');
 }
 
 function startDefinitivo() {
   currentMode = 'definitivo';
+  feedbackMode = LS.get('feedbackMode') || 'deferred';
   const pool = shuffle(plants);
   qs = pool.map(plant => {
     const wrongs = shuffle(plants.filter(p => p.name !== plant.name)).slice(0, 3);
@@ -835,6 +906,7 @@ function startDefinitivo() {
   });
   qIdx = 0;
   buildDots();
+  updateToggleUI();
   renderQ();
   show('sTest');
 }
@@ -877,13 +949,39 @@ function renderQ() {
   const oc = document.getElementById('qOpts');
   oc.innerHTML = '';
   const letters = ['A', 'B', 'C', 'D'];
+  const answered = q.sel !== null;
   q.opts.forEach((opt, i) => {
     const b = document.createElement('button');
-    b.className = 'opt' + (q.sel === opt.name ? ' sel' : '');
+    const isSelected = q.sel === opt.name;
+    const isCorrect  = opt.name === q.plant.name;
+    let cls = 'opt';
+    if (feedbackMode === 'immediate' && answered) {
+      if (isCorrect) cls += ' correct';
+      else if (isSelected) cls += ' wrong';
+      b.disabled = true;
+    } else {
+      if (isSelected) cls += ' sel';
+      b.onclick = () => { qs[qIdx].sel = opt.name; renderQ(); };
+    }
+    b.className = cls;
     b.innerHTML = `<span class="opt-ltr">${letters[i]}</span>${opt.name}`;
-    b.onclick = () => { qs[qIdx].sel = opt.name; renderQ(); };
     oc.appendChild(b);
   });
+
+  // feedback banner
+  const fb = document.getElementById('qFeedback');
+  if (feedbackMode === 'immediate' && answered) {
+    fb.style.display = '';
+    if (q.sel === q.plant.name) {
+      fb.className = 'q-feedback ok';
+      fb.textContent = '✓ ¡Correcto!';
+    } else {
+      fb.className = 'q-feedback ko';
+      fb.innerHTML = `✗ Incorrecto &mdash; la respuesta correcta es <strong>${q.plant.name}</strong>`;
+    }
+  } else {
+    fb.style.display = 'none';
+  }
 
   document.getElementById('btnPrev').disabled = qIdx === 0;
   document.getElementById('btnNext').disabled = qIdx === tot - 1;
